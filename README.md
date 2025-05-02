@@ -1,1 +1,3 @@
-# nerc-nagios-ansible-roles
+# nerc-nagios-ansible-collection
+
+Collection of roles to install Nagios components.
