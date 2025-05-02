@@ -1,0 +1,63 @@
+- name: Create directory structure
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    mode: "{{ item.mode }}"
+    state: directory
+  loop:
+    - { path: '{{ nerc_nrpe_prefix }}',
+        owner: 'root',
+        group: 'root',
+        mode: '0755' }
+    - { path: '{{ nerc_nrpe_prefix }}/etc',
+        owner: 'root',
+        group: 'root',
+        mode: '0755' }
+    - { path: '{{ nerc_nrpe_prefix }}/log',
+        owner: '{{ nerc_nagios_uid }}',
+        group: '{{ nerc_nagios_gid }}',
+        mode: '0755' }
+
+- name: Copy config
+  ansible.builtin.template:
+    src: nrpe.cfg.j2
+    dest: '{{ nerc_nrpe_prefix}}/nrpe.cfg'
+    owner: 'root'
+    group: 'root'
+    mode: '0644'
+  notify: Restart NRPE
+
+- name: Create NRPE container
+  containers.podman.podman_container:
+    name: "{{ nerc_nrpe_name }}"
+    state: quadlet
+    recreate: true
+    image: "ghcr.io/nerc-project/nerc-nagios:{{ nerc_nagios_version }}"
+    privileged: true
+    network: host
+    ipc: host
+    pid: host
+    quadlet_options:
+      - |
+        [Install]
+        WantedBy=default.target
+    generate_systemd:
+      names: true
+      new: true
+      path: /etc/systemd/system
+    volumes:
+      - "{{ nerc_nrpe_prefix}}/nrpe.cfg:/etc/nagios/nrpe.cfg:ro"
+      - "{{ nerc_nrpe_prefix}}/etc:/etc/nrpe.d:ro"
+      - "{{ nerc_nrpe_prefix}}/log:/var/log/nrpe:rw"
+      - "/:/rootfs:ro"
+      - "/var/run:/var/run:rw"
+      - "/sys:/sys:ro"
+    command: /usr/sbin/nrpe -c /etc/nagios/nrpe.cfg -f
+
+- name: Enable NRPE systemd service
+  ansible.builtin.systemd:
+    name: "{{ nerc_nrpe_name }}"
+    daemon_reload: true
+    state: started
+    enabled: true
