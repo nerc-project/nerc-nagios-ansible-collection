@@ -23,6 +23,8 @@ Example:
 ```sh
 - name: deploy nrpe
   hosts: localhost
+    vars:
+      nrpe_allow_addresses: 1.2.3.4
   gather_facts: false
   roles:
     - nerc.nagios.nrpe
