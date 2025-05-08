@@ -2,8 +2,6 @@
 
 Collection of roles to deploy Nagios components on NERC infrastructure
 
-## Roles
-
 To use, update galaxy-requirements.yml
 
 ```sh
@@ -14,7 +12,11 @@ collections:
     source: https://github.com/nerc-project/nerc-nagios-ansible-collection.git
 ```
 
-nrpe: Install nrpe container on a host to be monitored by the nagios server.
+## Roles
+
+### nrpe
+
+Installs nrpe container on a host to be monitored by the nagios server.
 
 Example:
 
