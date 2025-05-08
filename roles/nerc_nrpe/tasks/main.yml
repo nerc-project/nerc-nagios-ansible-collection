@@ -15,8 +15,8 @@
         group: 'root',
         mode: '0755' }
     - { path: '{{ nerc_nrpe_prefix }}/log',
-        owner: '{{ nerc_nagios_uid }}',
-        group: '{{ nerc_nagios_gid }}',
+        owner: '{{ nerc_nrpe_uid }}',
+        group: '{{ nerc_nrpe_gid }}',
         mode: '0755' }
 
 - name: Copy config
