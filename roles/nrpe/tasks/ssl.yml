@@ -1,0 +1,16 @@
+- name: Create directory structure
+  ansible.builtin.file:
+    path: '{{ nerc_nrpe_prefix }}/etc/ssl'
+    owner: 'root'
+    group: 'root'
+    mode: '0755'
+    state: directory
+
+- name: Copy ssl config
+  ansible.builtin.template:
+    src: ssl.cfg.j2
+    dest: '{{ nerc_nrpe_prefix}}/etc/ssl.cfg'
+    owner: 'root'
+    group: 'root'
+    mode: '0644'
+  notify: Restart NRPE
