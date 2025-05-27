@@ -31,8 +31,8 @@
 - name: SSL Tasks
   ansible.builtin.include_tasks:
     file: "ssl.yml"
-  when: nrpe_ssl is True
   notify: Restart NRPE
+  when: nrpe_ssl is True
 
 - name: Create NRPE container
   containers.podman.podman_container:
