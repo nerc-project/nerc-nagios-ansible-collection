@@ -31,7 +31,6 @@
 - name: SSL Tasks
   ansible.builtin.include_tasks:
     file: "ssl.yml"
-  notify: Restart NRPE
   when: nrpe_ssl is True
 
 - name: Create NRPE container
