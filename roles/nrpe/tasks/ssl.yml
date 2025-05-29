@@ -6,11 +6,28 @@
     mode: '0755'
     state: directory
 
-- name: Copy ssl config
+- name: Install NRPE config and ssl files
   ansible.builtin.template:
-    src: ssl.cfg.j2
-    dest: '{{ nerc_nrpe_prefix}}/etc/ssl.cfg'
-    owner: 'root'
-    group: 'root'
-    mode: '0644'
-  notify: Restart NRPE
+    src: 'templates/nrpe/{{ item.path }}.j2'
+    dest: '{{ nerc_nrpe_prefix }}/{{ item.path }}'
+    owner: '{{ item.owner }}'
+    group: '{{ item.group }}'
+    mode: '{{ item.mode }}'
+  notify: Restart Nagios
+  loop:
+    - { path: 'etc/ssl.cfg',
+        owner: 'root',
+        group: 'root',
+        mode: '0644' }
+    - { path: 'etc/ssl/nrpe-ca-cert.pem',
+        owner: 'root',
+        group: 'root',
+        mode: '0644' }
+    - { path: 'etc/ssl/nrpe-cert.pem',
+        owner: 'root',
+        group: 'root',
+        mode: '0644' }
+    - { path: 'etc/ssl/nrpe-key.pem',
+        owner: 'root',
+        group: 'root',
+        mode: '0644' }
