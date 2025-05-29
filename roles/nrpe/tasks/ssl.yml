@@ -8,7 +8,7 @@
 
 - name: Install NRPE config and ssl files
   ansible.builtin.template:
-    src: 'templates/nrpe/{{ item.path }}.j2'
+    src: 'templates/{{ item.path }}.j2'
     dest: '{{ nerc_nrpe_prefix }}/{{ item.path }}'
     owner: '{{ item.owner }}'
     group: '{{ item.group }}'
