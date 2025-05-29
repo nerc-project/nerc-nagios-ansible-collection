@@ -28,6 +28,11 @@
     mode: '0644'
   notify: Restart NRPE
 
+- name: SSL Tasks
+  ansible.builtin.include_tasks:
+    file: "ssl.yml"
+  when: nrpe_ssl
+
 - name: Create NRPE container
   containers.podman.podman_container:
     name: "{{ nerc_nrpe_name }}"
