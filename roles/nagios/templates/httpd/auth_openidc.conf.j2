@@ -1,0 +1,27 @@
+RewriteEngine On
+RewriteCond %{HTTPS} !=on
+RewriteRule ^/(.*) https://%{SERVER_NAME}/$1 [R,L]
+
+OIDCClientID {{ vault_nerc_ops_httpd_oidcclient }}
+OIDCClientSecret {{ vault_nerc_ops_httpd_oidcsecret }}
+OIDCCryptoPassphrase {{ vault_nerc_ops_httpd_oidcpw }}
+
+OIDCProviderMetadataURL {{ nerc_nagios_oidcmetadataurl }}
+OIDCRedirectURI {{ nerc_nagios_oidredirecturi }}
+
+# See https://github.com/Reposoft/openidc-keycloak-test/issues/7
+# OIDCProviderTokenEndpointAuth client_secret_basic
+
+OIDCSSLValidateServer Off
+OIDCScope "openid email"
+
+OIDCRemoteUserClaim email
+OIDCPassUserInfoAs claims
+OIDCPassClaimsAs headers
+RequestHeader unset REMOTE_USER
+RequestHeader set REMOTE_USER expr=%{REMOTE_USER}
+
+<Location /auth>
+   AuthType openid-connect
+   Require valid-user
+</Location>

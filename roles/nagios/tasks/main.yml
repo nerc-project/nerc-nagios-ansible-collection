@@ -1,0 +1,256 @@
+- name: Create directory structure
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    mode: "{{ item.mode }}"
+    state: directory
+  loop:
+    - { path: '{{ nerc_nagios_prefix }}',
+        owner: 'root',
+        group: 'root',
+        mode: '0755' }
+    - { path: '{{ nerc_nagios_prefix }}/etc-nagios',
+        owner: 'root',
+        group: 'root',
+        mode: '0755' }
+    - { path: '{{ nerc_nagios_prefix }}/etc-nagios/private',
+        owner: 'root',
+        group: '{{ nerc_nagios_gid }}',
+        mode: '0750' }
+    - { path: '{{ nerc_nagios_prefix }}/etc-nagios/objects',
+        owner: 'root',
+        group: '{{ nerc_nagios_gid }}',
+        mode: '0750' }
+    - { path: '{{ nerc_nagios_prefix }}/spool-nagios',
+        owner: '{{ nerc_nagios_uid }}',
+        group: '{{ nerc_nagios_gid }}',
+        mode: '0755' }
+    - { path: '{{ nerc_nagios_prefix }}/spool-nagios/checkresults',
+        owner: '{{ nerc_nagios_uid }}',
+        group: '{{ nerc_nagios_gid }}',
+        mode: '0750' }
+    - { path: '{{ nerc_nagios_prefix }}/spool-nagios/cmd',
+        owner: '{{ nerc_nagios_uid }}',
+        group: '{{ nerc_nagios_gid }}',
+        mode: '2755' }
+    - { path: '{{ nerc_nagios_prefix }}/log-nagios',
+        owner: '{{ nerc_nagios_uid }}',
+        group: '{{ nerc_nagios_gid }}',
+        mode: '0750' }
+    - { path: '{{ nerc_nagios_prefix }}/log-nagios/archives',
+        owner: '{{ nerc_nagios_uid }}',
+        group: '{{ nerc_nagios_gid }}',
+        mode: '0750' }
+    - { path: '{{ nerc_nagios_prefix }}/nerc-scripts',
+        owner: 'root',
+        group: 'root',
+        mode: '0755' }
+    - { path: '{{ nerc_nagios_prefix }}/nerc-scripts/nagios_notifications',
+        owner: 'root',
+        group: 'root',
+        mode: '0755' }
+    - { path: '{{ nerc_nagios_prefix }}/nerc-scripts/nagios_checks',
+        owner: 'root',
+        group: 'root',
+        mode: '0755' }
+    - { path: '{{ nerc_nagios_prefix }}/nerc-scripts/custom',
+        owner: 'root',
+        group: 'root',
+        mode: '0755' }
+    - { path: '{{ nerc_nagios_prefix }}/certs-httpd',
+        owner: 'root',
+        group: 'root',
+        mode: '0755' }
+    - { path: '{{ nerc_nagios_prefix }}/config-httpd',
+        owner: 'root',
+        group: 'root',
+        mode: '0755' }
+    - { path: '{{ nerc_nagios_prefix }}/run-php-fpm',
+        owner: '{{ nerc_nagios_uid }}',
+        group: '{{ nerc_nagios_gid }}',
+        mode: '0755' }
+
+- name: Install Apache mod_openidc config template
+  ansible.builtin.template:
+    src: 'httpd/{{ item.path }}.j2'
+    dest: '{{ nerc_nagios_prefix }}/config-httpd/{{ item.path }}'
+    owner: '{{ item.owner }}'
+    group: '{{ item.group }}'
+    mode: '{{ item.mode }}'
+  notify: Restart Webserver
+  loop:
+    - { path: 'auth_openidc.conf',
+        owner: 'root',
+        group: 'root',
+        mode: '0644' }
+    - { path: 'nagios.conf',
+        owner: 'root',
+        group: 'root',
+        mode: '0644' }
+
+- name: Install Nagios config files
+  ansible.builtin.template:
+    src: 'nagios/{{ item.path }}.j2'
+    dest: '{{ nerc_nagios_prefix }}/etc-nagios/{{ item.path }}'
+    owner: '{{ item.owner }}'
+    group: '{{ item.group }}'
+    mode: '{{ item.mode }}'
+  notify: Restart Nagios
+  loop:
+    - { path: 'nagios.cfg',
+        owner: 'root',
+        group: 'root',
+        mode: '0644' }
+    - { path: 'cgi.cfg',
+        owner: 'root',
+        group: 'root',
+        mode: '0644' }
+    - { path: 'private/resource.cfg',
+        owner: 'root',
+        group: '{{ nerc_nagios_gid }}',
+        mode: '0640' }
+    - { path: 'objects/commands.cfg',
+        owner: 'root',
+        group: 'root',
+        mode: '0644' }
+    - { path: 'objects/contacts.cfg',
+        owner: 'root',
+        group: 'root',
+        mode: '0644' }
+    - { path: 'objects/localhost.cfg',
+        owner: 'root',
+        group: 'root',
+        mode: '0644' }
+    - { path: 'objects/templates.cfg',
+        owner: 'root',
+        group: 'root',
+        mode: '0644' }
+    - { path: 'objects/timeperiods.cfg',
+        owner: 'root',
+        group: 'root',
+        mode: '0644' }
+
+- name: Install slack notification script
+  ansible.builtin.template:
+    src: 'nagios_notifications/slack.sh.j2'
+    dest: '{{ nerc_nagios_prefix }}/nerc-scripts/nagios_notifications/slack.sh'
+    owner: 'root'
+    group: 'root'
+    mode: '0755'
+  when: vault_slack_webhook_address
+
+- name: Check of ssl cert already exists
+  ansible.builtin.stat:
+    path: '{{ nerc_nagios_prefix }}/certs-httpd/server.crt'
+  register: cert_file_result
+
+- name: Generate self signed ssl cert
+  ansible.builtin.shell: |
+    openssl req -x509 -nodes -days 3650 -newkey rsa:2048 \
+      -keyout '{{ nerc_nagios_prefix }}/certs-httpd/server.key' \
+      -out '{{ nerc_nagios_prefix }}/certs-httpd/server.crt' \
+      -subj "/C=US/ST=MA/L=Holyoke/OU=NERC/CN={{ ansible_host }}" \
+      -addext "subjectAltName=DNS:{{ ansible_host }}"
+  args:
+    executable: bash
+  register: mkselfcrt_output
+  changed_when: mkselfcrt_output
+  when: not cert_file_result.stat.exists
+  notify: Restart Webserver
+
+- name: Create a list of nagios volume mounts
+  ansible.builtin.set_fact:
+    nagios_mounts:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "{{ nerc_nagios_prefix }}/etc-nagios:/etc/nagios:ro"
+      - "{{ nerc_nagios_prefix }}/spool-nagios:/var/spool/nagios:rw"
+      - "{{ nerc_nagios_prefix }}/log-nagios:/var/log/nagios:rw"
+      - "{{ nerc_nagios_prefix }}/nerc-scripts:/opt/nerc-scripts:ro"
+
+- name: Create a list of nagios webserver mounts
+  ansible.builtin.set_fact:
+    nagios_httpd_mounts:
+      "{{ nagios_mounts + \
+       ['{{ nerc_nagios_prefix }}/run-php-fpm:/run/php-fpm:rw', \
+        '{{ nerc_nagios_prefix }}/certs-httpd/server.key:\
+        /etc/pki/tls/private/localhost.key:ro', \
+        '{{ nerc_nagios_prefix }}/certs-httpd/server.crt:\
+        /etc/pki/tls/certs/localhost.crt:ro', \
+        '{{ nerc_nagios_prefix }}/config-httpd/auth_openidc.conf:\
+        /etc/httpd/conf.d/auth_openidc.conf', \
+        '{{ nerc_nagios_prefix }}/config-httpd/nagios.conf:\
+        /etc/httpd/conf.d/nagios.conf'] }}"
+
+- name: Create Nagios container
+  containers.podman.podman_container:
+    name: "{{ nerc_nagios_name }}"
+    state: quadlet
+    recreate: true
+    image: "ghcr.io/nerc-project/nerc-nagios:{{ nerc_nagios_version }}"
+    security_opt: 'label=disable'
+    cap_add: CAP_NET_RAW
+    init: true
+    network: host
+    quadlet_options:
+      - |
+        [Install]
+        WantedBy=default.target
+    generate_systemd:
+      names: true
+      new: true
+      path: /etc/systemd/system
+    volumes: "{{ nagios_mounts }}"
+    command:
+      - /usr/sbin/nagios
+      - /etc/nagios/nagios.cfg
+
+- name: Create Nagios webserver container
+  containers.podman.podman_container:
+    name: "{{ nerc_nagios_name }}-httpd"
+    state: quadlet
+    recreate: true
+    image: "ghcr.io/nerc-project/nerc-nagios:{{ nerc_nagios_version }}"
+    security_opt: 'label=disable'
+    quadlet_options:
+      - |
+        [Install]
+        WantedBy=defaut.target
+    generate_systemd:
+      names: true
+      new: true
+      path: /etc/systemd/system
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes: "{{ nagios_httpd_mounts }}"
+    command:
+      - /usr/sbin/httpd
+      - -DFOREGROUND
+
+- name: Create Nagios webserver container
+  containers.podman.podman_container:
+    name: "{{ nerc_nagios_name }}-fpm"
+    state: present
+    recreate: true
+    image: "ghcr.io/nerc-project/nerc-nagios:{{ nerc_nagios_version }}"
+    security_opt: 'label=disable'
+    generate_systemd:
+      names: true
+      new: true
+      path: /etc/systemd/system
+    volumes: "{{ nagios_httpd_mounts }}"
+    command:
+      - /usr/sbin/php-fpm
+      - --nodaemonize
+
+- name: Enable and start systemd containers
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    daemon_reload: true
+    state: started
+    enabled: true
+  loop:
+    - "{{ nerc_nagios_name }}"
+    - "{{ nerc_nagios_name }}-httpd"
+    - "{{ nerc_nagios_name }}-fpm"

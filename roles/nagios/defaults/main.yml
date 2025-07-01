@@ -1,0 +1,5 @@
+nerc_nagios_name: "nerc-nagios"
+nerc_nagios_prefix: "/srv/{{ nerc_nagios_name }}"
+nerc_nagios_version: "main"
+nerc_nagios_uid: 994
+nerc_nagios_gid: 994
