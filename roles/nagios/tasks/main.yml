@@ -231,10 +231,14 @@
 - name: Create Nagios webserver container
   containers.podman.podman_container:
     name: "{{ nerc_nagios_name }}-fpm"
-    state: present
+    state: quadlet
     recreate: true
     image: "ghcr.io/nerc-project/nerc-nagios:{{ nerc_nagios_version }}"
     security_opt: 'label=disable'
+    quadlet_options:
+      - |
+        [Install]
+        WantedBy=defaut.target
     generate_systemd:
       names: true
       new: true
