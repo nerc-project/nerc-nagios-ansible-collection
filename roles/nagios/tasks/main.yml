@@ -215,7 +215,7 @@
     quadlet_options:
       - |
         [Install]
-        WantedBy=defaut.target
+        WantedBy=default.target
     generate_systemd:
       names: true
       new: true
@@ -238,7 +238,7 @@
     quadlet_options:
       - |
         [Install]
-        WantedBy=defaut.target
+        WantedBy=default.target
     generate_systemd:
       names: true
       new: true
