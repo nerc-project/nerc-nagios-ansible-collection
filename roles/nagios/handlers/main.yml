@@ -1,0 +1,14 @@
+- name: Restart Webserver
+  ansible.builtin.service:
+    name: "{{ nerc_nagios_name }}-httpd"
+    state: restarted
+
+- name: Restart Nagios
+  ansible.builtin.service:
+    name: "{{ nerc_nagios_name }}"
+    state: restarted
+
+- name: Restart FPM
+  ansible.builtin.service:
+    name: "{{ nerc_nagios_name }}-fpm"
+    state: restarted

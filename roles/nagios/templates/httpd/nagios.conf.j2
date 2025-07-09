@@ -1,0 +1,33 @@
+ScriptAlias /nagios/cgi-bin "/usr/lib64/nagios/cgi-bin/"
+
+RedirectMatch "^/$" "/nagios/"
+
+<Directory "/usr/lib64/nagios/cgi-bin/">
+#  SSLRequireSSL
+   Options ExecCGI
+   AllowOverride None
+   <RequireAll>
+      Require all granted
+      # Require host 127.0.0.1
+
+      AuthName "Nagios Access"
+      AuthType openid-connect
+      Require claim nerc_roles:nerc-netbox
+   </RequireAll>
+</Directory>
+
+Alias /nagios "/usr/share/nagios/html"
+
+<Directory "/usr/share/nagios/html">
+#  SSLRequireSSL
+   Options None
+   AllowOverride None
+   <RequireAll>
+      Require all granted
+      # Require host 127.0.0.1
+
+      AuthName "Nagios Access"
+      AuthType openid-connect
+      Require claim nerc_roles:nerc-netbox
+   </RequireAll>
+</Directory>
