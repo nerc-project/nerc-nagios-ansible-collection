@@ -13,5 +13,5 @@
         mode: '0644' }
     - { path: 'nrpe-key.pem',
         owner: 'root',
-        group: "{{ nerc_nrpe_gid }}",
+        group: "{{ nerc_nagios_gid }}",
         mode: '0640' }
