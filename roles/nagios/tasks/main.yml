@@ -26,6 +26,10 @@
         owner: '{{ nerc_nagios_uid }}',
         group: '{{ nerc_nagios_gid }}',
         mode: '0755' }
+    - { path: '{{ nerc_nagios_prefix }}/etc-nrpe.d',
+        owner: 'root',
+        group: 'root',
+        mode: '0755' }
     - { path: '{{ nerc_nagios_prefix }}/spool-nagios/checkresults',
         owner: '{{ nerc_nagios_uid }}',
         group: '{{ nerc_nagios_gid }}',
@@ -131,6 +135,11 @@
         group: 'root',
         mode: '0644' }
 
+- name: NRPE SSL Tasks
+  ansible.builtin.include_tasks:
+    file: "ssl.yml"
+  when: nrpe_ssl is defined and nrpe_ssl
+
 - name: Install slack notification script
   ansible.builtin.template:
     src: 'nagios_notifications/slack.sh.j2'
@@ -167,6 +176,7 @@
       - "{{ nerc_nagios_prefix }}/spool-nagios:/var/spool/nagios:rw"
       - "{{ nerc_nagios_prefix }}/log-nagios:/var/log/nagios:rw"
       - "{{ nerc_nagios_prefix }}/nerc-scripts:/opt/nerc-scripts:ro"
+      - "{{ nerc_nagios_prefix }}/etc-nrpe.d:/etc/nrpe.d:ro"
 
 - name: Create a list of nagios webserver mounts
   ansible.builtin.set_fact:
