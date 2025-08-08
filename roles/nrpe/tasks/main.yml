@@ -14,6 +14,10 @@
         owner: 'root',
         group: 'root',
         mode: '0755' }
+    - { path: '{{ nerc_nrpe_prefix }}/scripts',
+        owner: 'root',
+        group: 'root',
+        mode: '0755' }
     - { path: '{{ nerc_nrpe_prefix }}/log',
         owner: '{{ nerc_nrpe_uid }}',
         group: '{{ nerc_nrpe_gid }}',
@@ -22,11 +26,21 @@
 - name: Copy config
   ansible.builtin.template:
     src: nrpe.cfg.j2
-    dest: '{{ nerc_nrpe_prefix}}/nrpe.cfg'
+    dest: '{{ nerc_nrpe_prefix }}/nrpe.cfg'
     owner: 'root'
     group: 'root'
     mode: '0644'
   notify: Restart NRPE
+
+- name: Install additional scrpts
+  ansible.builtin.template:
+    src: "{{ item }}.j2"
+    dest: "{{ nerc_nrpe_prefix }}/{{ item }}"
+    owner: 'root'
+    group: 'root'
+    mode: '0755'
+  loop:
+    - "scripts/check_disk.py"
 
 - name: SSL Tasks
   ansible.builtin.include_tasks:
@@ -52,9 +66,10 @@
       new: true
       path: /etc/systemd/system
     volumes:
-      - "{{ nerc_nrpe_prefix}}/nrpe.cfg:/etc/nagios/nrpe.cfg:ro"
-      - "{{ nerc_nrpe_prefix}}/etc:/etc/nrpe.d:ro"
-      - "{{ nerc_nrpe_prefix}}/log:/var/log/nrpe:rw"
+      - "{{ nerc_nrpe_prefix }}/nrpe.cfg:/etc/nagios/nrpe.cfg:ro"
+      - "{{ nerc_nrpe_prefix }}/etc:/etc/nrpe.d:ro"
+      - "{{ nerc_nrpe_prefix }}/scripts:/opt/scripts:ro"
+      - "{{ nerc_nrpe_prefix }}/log:/var/log/nrpe:rw"
       - "/:/rootfs:ro"
       - "/var/run:/var/run:rw"
       - "/sys:/sys:ro"
