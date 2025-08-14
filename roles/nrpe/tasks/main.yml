@@ -47,6 +47,16 @@
     file: "ssl.yml"
   when: nrpe_ssl is defined and nrpe_ssl
 
+- name: Install NRPE configs
+  ansible.builtin.template:
+    src: "{{ item }}.j2"
+    dest: "{{ nerc_nrpe_prefix }}/etc/{{ item }}"
+    owner: 'root'
+    group: 'root'
+    mode: '0755'
+  loop:
+    "{{ nrpe_configs }}"
+
 - name: Create NRPE container
   containers.podman.podman_container:
     name: "{{ nerc_nrpe_name }}"
