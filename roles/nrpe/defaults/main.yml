@@ -3,3 +3,4 @@ nerc_nrpe_prefix: "/srv/{{ nerc_nrpe_name }}"
 nerc_nagios_version: "main"
 nerc_nrpe_uid: 994
 nerc_nrpe_gid: 994
+nrpe_configs: []
