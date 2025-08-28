@@ -1,6 +1,6 @@
 nerc_nrpe_name: "nerc-nrpe"
 nerc_nrpe_prefix: "/srv/{{ nerc_nrpe_name }}"
-nerc_nrpe_nagios_server: "127.0.0.1"
+nerc_nrpe_server_ip: ""
 nerc_nagios_version: "main"
 nerc_nrpe_uid: 994
 nerc_nrpe_gid: 994
