@@ -1,0 +1,10 @@
+- name: Install Nagios server configs
+  ansible.builtin.template:
+    src: '{{ nagios_cfg_prefix }}/objects/{{ item }}.j2'
+    dest: '{{ nagios_cfg_prefix }}/etc-nagios/objects/{{ nagios_cfg_org }}-{{ item }}'
+    owner: 'root'
+    group: 'root'
+    mode: '0644'
+  notify: Restart Nagios
+  loop:
+    - "templates.cfg"
