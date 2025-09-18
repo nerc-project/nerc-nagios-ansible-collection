@@ -23,14 +23,17 @@
         group: '{{ nerc_nrpe_gid }}',
         mode: '0755' }
 
-- name: Copy config
+- name: Copy configs
   ansible.builtin.template:
-    src: nrpe.cfg.j2
-    dest: '{{ nerc_nrpe_prefix }}/nrpe.cfg'
+    src: '{{ item }}.j2'
+    dest: '{{ nerc_nrpe_prefix }}/{{item}}'
     owner: 'root'
     group: 'root'
     mode: '0644'
   notify: Restart NRPE
+  loop:
+    - 'nrpe.cfg'
+    - 'etc/nerc-nrpe-commands.cfg'
 
 - name: Install additional scrpts
   ansible.builtin.template:
