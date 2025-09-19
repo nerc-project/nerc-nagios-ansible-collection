@@ -1,20 +1,20 @@
 {% for item in nagios_cfg_services %}
-    {% if
-        item.hosts is not defined
-        and item.hostgroups is not defined
-    %}
-        {{ item.throwerror }}
-    {% endif %}
+{% if
+  item.hosts is not defined
+  and item.hostgroups is not defined
+%}
+{{ item.throwerror }}
+{% endif %}
 define service {
     {% if item.name is defined %}
     name                   {{ item.name }}
     {% endif %}
     service_description    {{ item.service_description }}
     use                    {{ item.use }}
-    {% if hosts is defined %}
+    {% if item.hosts is defined %}
     hosts                  {{ item.hosts }}
     {% endif %}
-    {% if hostgroups is defined %}
+    {% if item.hostgroups is defined %}
     hostgroups             {{ item.hostgroups }}
     {% endif %}
     check_command          {{ item.check_command }}
