@@ -6,7 +6,7 @@
         item.throwerror
     {% endif %}
 define service {
-    {% if item.name is defeined %}
+    {% if item.name is defined %}
     name                   {{ item.name }}
     {% endif %}
     service_description    {{ item.description }}
