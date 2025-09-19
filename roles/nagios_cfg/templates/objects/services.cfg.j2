@@ -9,7 +9,7 @@ define service {
     {% if item.name is defined %}
     name                   {{ item.name }}
     {% endif %}
-    service_description    {{ item.description }}
+    service_description    {{ item.service_description }}
     use                    {{ item.use }}
     {% if hosts is defined %}
     hosts                  {{ item.hosts }}
