@@ -27,3 +27,4 @@
     src: 'objects/services.cfg.j2'
     dest: '{{ nagios_cfg_etc }}/objects/{{ nagios_cfg_org }}-services.cfg'
   when: nagios_cfg_services | length > 0
+  notify: Restart Nagios
