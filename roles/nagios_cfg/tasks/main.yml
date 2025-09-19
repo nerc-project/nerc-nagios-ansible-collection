@@ -21,3 +21,9 @@
     src: 'objects/servicegroups.cfg.j2'
     dest: '{{ nagios_cfg_etc }}/objects/{{ nagios_cfg_org }}-servicegroups.cfg'
   when: nagios_cfg_hostgroups |length > 0
+
+- name: Install Nagios services
+  ansible.builtin.template:
+    src: 'objects/services.cfg.j2'
+    dest: '{{ nagios_cfg_etc }}/objects/{{ nagios_cfg_org }}-services.cfg'
+  when: nagios_cfg_services | length > 0
