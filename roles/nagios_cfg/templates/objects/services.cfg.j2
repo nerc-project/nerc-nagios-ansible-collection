@@ -6,17 +6,17 @@
 {{ item.throwerror }}
 {% endif %}
 define service {
-    {% if item.name is defined %}
+{% if item.name is defined %}
     name                   {{ item.name }}
-    {% endif %}
+{% endif %}
     service_description    {{ item.service_description }}
     use                    {{ item.use }}
-    {% if item.hosts is defined %}
+{% if item.hosts is defined %}
     hosts                  {{ item.hosts }}
-    {% endif %}
-    {% if item.hostgroups is defined %}
+{% endif %}
+{% if item.hostgroups is defined %}
     hostgroups             {{ item.hostgroups }}
-    {% endif %}
+{% endif %}
     check_command          {{ item.check_command }}
 }
 {% endfor %}
