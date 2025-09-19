@@ -6,7 +6,9 @@
         item.throwerror
     {% endif %}
 define service {
+    {% if item.name is defeined %}
     name                   {{ item.name }}
+    {% endif %}
     service_description    {{ item.description }}
     use                    {{ item.use }}
     {% if hosts is defined %}
