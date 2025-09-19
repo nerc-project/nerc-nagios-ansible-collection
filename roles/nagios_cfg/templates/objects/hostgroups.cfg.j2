@@ -1,0 +1,6 @@
+{% for item in nagios_cfg_hostgroups %}
+define hostgroup {
+    hostgroup_name    {{ item.name }}
+    alias             {{ item.alias }}
+}
+{% endfor %}
