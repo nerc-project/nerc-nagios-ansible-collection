@@ -5,4 +5,3 @@ nagios_cfg_prefix: "/srv/{{ nagios_cfg_instance }}"
 nagios_cfg_etc: "{{ nagios_cfg_prefix }}/etc-nagios"
 nagios_cfg_templates: "templates.cfg"
 nagios_cfg_commands: "commands.cfg"
-
