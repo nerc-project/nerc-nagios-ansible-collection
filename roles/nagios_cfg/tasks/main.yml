@@ -7,8 +7,8 @@
     mode: '0644'
   notify: Restart Nagios
   loop:
-    - "templates.cfg"
-    - "commands.cfg"
+    - "{{ nagios_cfg_templates }}"
+    - "{{ nagios_cfg_commands }}"
 
 - name: Install Nagios hostgroups
   ansible.builtin.template:
