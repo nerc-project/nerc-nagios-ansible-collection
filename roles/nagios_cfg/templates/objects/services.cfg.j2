@@ -1,9 +1,9 @@
 {% for item in nagios_cfg_services %}
     {% if
-        item.host_name is not defined
-        and service.hostgroup_name is not defined
+        item.hosts is not defined
+        and service.hostgroups is not defined
     %}
-        item.throwerror
+        {{ item.throwerror }}
     {% endif %}
 define service {
     {% if item.name is defined %}
