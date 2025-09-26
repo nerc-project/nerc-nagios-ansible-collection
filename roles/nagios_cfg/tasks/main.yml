@@ -40,4 +40,4 @@
   ansible.builtin.template:
     src: 'objects/{{ item }}.j2'
     dest: '{{ nagios_cfg_etc }}/objects/{{ item }}'
-  loop: nagios_cfg_template_files
+  loop: "{{ nagios_cfg_template_files }}"
