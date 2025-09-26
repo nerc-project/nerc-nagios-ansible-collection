@@ -18,5 +18,8 @@ define service {
     hostgroups             {{ item.hostgroups }}
 {% endif %}
     check_command          {{ item.check_command }}
+{% for extra_parameter in nagios_cfg_services.extra_params %}
+    {{ extra_parameter.name }}    {{ extra_parameter.value }}
+{% endfor %}
 }
 {% endfor %}
