@@ -29,9 +29,15 @@
   when: nagios_cfg_services | length > 0
   notify: Restart Nagios
 
-- name: Install Nagios hosts
+#- name: Install Nagios hosts
+#  ansible.builtin.template:
+#    src: 'objects/hosts.cfg.j2'
+#    dest: '{{ nagios_cfg_etc }}/objects/{{ nagios_cfg_org }}-hosts.cfg'
+#  when: nagios_cfg_hosts | length > 0
+#  notify: Restart Nagios
+#
+- name: Install Nagios hosts configs
   ansible.builtin.template:
-    src: 'objects/hosts.cfg.j2'
-    dest: '{{ nagios_cfg_etc }}/objects/{{ nagios_cfg_org }}-hosts.cfg'
-  when: nagios_cfg_hosts | length > 0
-  notify: Restart Nagios
+    src: 'objects/{{ item }}.j2'
+    dest: '{{ nagios_cfg_etc }}/objects/{{ item }}'
+  loop: nagios_cfg_template_files
