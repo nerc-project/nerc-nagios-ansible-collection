@@ -1,0 +1,8 @@
+define contact {
+    contact_name                        nercadmin
+    use                                 generic-contact
+    alias                               NERC Admins
+    host_notification_commands          notify-host-slack
+    service_notification_commands       notify-service-slack
+    contactgroups                       admins
+}

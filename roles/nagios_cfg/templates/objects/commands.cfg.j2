@@ -1,0 +1,81 @@
+################################################################################
+#
+# NOTIFICATION COMMANDS
+#
+################################################################################
+
+define command {
+    command_name    notify-host-slack
+    command_line    /bin/bash /opt/nerc-scripts/nagios_notifications/slack.sh -a "$NOTIFICATIONTYPE$" -b "$HOSTNAME$" -c "$HOSTSTATE$" -d "$HOSTOUTPUT$"
+}
+
+define command {
+    command_name    notify-service-slack
+    command_line    /bin/bash /opt/nerc-scripts/nagios_notifications/slack.sh -a "$NOTIFICATIONTYPE$" -b "$HOSTNAME$" -e "$SERVICEDESC$" -f "$SERVICESTATE$" -g "$SERVICEOUTPUT$"
+}
+
+################################################################################
+#
+# CHECK COMMANDS
+#
+################################################################################
+
+define command {
+    command_name    check_osp_backups
+    command_line    /opt/nerc-scripts/nagios_checks/check_osp_backups
+}
+
+define command {
+    command_name    check_vault_backups
+    command_line    /opt/nerc-scripts/nagios_checks/check_vault_backups
+}
+
+define command {
+    command_name    check_postgres_backups
+    command_line    /opt/nerc-scripts/nagios_checks/check_postgres_backups $ARG1$ $ARG2$
+}
+
+define command {
+    command_name    check_ocp_login
+    command_line    /opt/nerc-scripts/nagios_checks/check_ocp_login $ARG1$
+}
+
+define command {
+    command_name    check_ocp_nodes
+    command_line    /opt/nerc-scripts/nagios_checks/check_ocp_nodes $ARG1$
+}
+
+define command {
+    command_name    check_ocp_mcp
+    command_line    /opt/nerc-scripts/nagios_checks/check_ocp_mcp $ARG1$
+}
+
+define command {
+    command_name    check_ocp_co
+    command_line    /opt/nerc-scripts/nagios_checks/check_ocp_co $ARG1$
+}
+
+define command {
+    command_name    check_ocp_nnce
+    command_line    /opt/nerc-scripts/nagios_checks/check_ocp_nnce $ARG1$
+}
+
+define command {
+    command_name    check_ocp_nncp
+    command_line    /opt/nerc-scripts/nagios_checks/check_ocp_nncp $ARG1$
+}
+
+define command {
+    command_name    check_nrpe
+    command_line    $USER1$/check_nrpe -C /etc/nrpe.d/nrpe-cert.pem -K /etc/nrpe.d/nrpe-key.pem -H $HOSTADDRESS$ -t 30 -c $ARG1$
+}
+
+define command {
+    command_name    check_nrpe_args
+    command_line    $USER1$/check_nrpe -C /etc/nrpe.d/nrpe-cert.pem -K /etc/nrpe.d/nrpe-key.pem -H $HOSTADDRESS$ -t 30 -c $ARG1$ -a $ARG2$
+}
+
+define command {
+    command_name   check_ssl_validity
+    command_line   $USER1$/check_ssl_validity -H $HOSTNAME$ -w $ARG1$ -c $ARG2$
+}
