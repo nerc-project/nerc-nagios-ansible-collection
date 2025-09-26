@@ -22,13 +22,13 @@
     dest: '{{ nagios_cfg_etc }}/objects/{{ nagios_cfg_org }}-servicegroups.cfg'
   when: nagios_cfg_hostgroups |length > 0
 
-- name: Install Nagios services
-  ansible.builtin.template:
-    src: 'objects/services.cfg.j2'
-    dest: '{{ nagios_cfg_etc }}/objects/{{ nagios_cfg_org }}-services.cfg'
-  when: nagios_cfg_services | length > 0
-  notify: Restart Nagios
-
+#- name: Install Nagios services
+#  ansible.builtin.template:
+#    src: 'objects/services.cfg.j2'
+#    dest: '{{ nagios_cfg_etc }}/objects/{{ nagios_cfg_org }}-services.cfg'
+#  when: nagios_cfg_services | length > 0
+#  notify: Restart Nagios
+#
 #- name: Install Nagios hosts
 #  ansible.builtin.template:
 #    src: 'objects/hosts.cfg.j2'
@@ -39,5 +39,6 @@
 - name: Install Nagios hosts configs
   ansible.builtin.template:
     src: 'objects/{{ item }}.j2'
-    dest: '{{ nagios_cfg_etc }}/objects/{{ item }}'
+    dest: '{{ nagios_cfg_etc }}/objects/{{ nagios_cfg_org }}-{{ item }}'
+  notify: Restart Nagios
   loop: "{{ nagios_cfg_template_files }}"
