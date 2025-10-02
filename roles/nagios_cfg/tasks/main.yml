@@ -1,44 +1,21 @@
-- name: Install Nagios server configs
+#- name: Install Nagios server configs
+#  ansible.builtin.template:
+#    src: 'objects/{{ item }}.j2'
+#    dest: '{{ nagios_cfg_etc }}/objects/{{ nagios_cfg_org }}-{{ item }}'
+#    owner: 'root'
+#    group: 'root'
+#    mode: '0644'
+#  notify: Restart Nagios
+#  loop:
+#    - "{{ nagios_cfg_templates }}"
+#    - "{{ nagios_cfg_commands }}"
+#
+- name: Install Nagios hosts configs
   ansible.builtin.template:
     src: 'objects/{{ item }}.j2'
     dest: '{{ nagios_cfg_etc }}/objects/{{ nagios_cfg_org }}-{{ item }}'
     owner: 'root'
     group: 'root'
     mode: '0644'
-  notify: Restart Nagios
-  loop:
-    - "{{ nagios_cfg_templates }}"
-    - "{{ nagios_cfg_commands }}"
-
-#- name: Install Nagios hostgroups
-#  ansible.builtin.template:
-#    src: 'objects/hostgroups.cfg.j2'
-#    dest: '{{ nagios_cfg_etc }}/objects/{{ nagios_cfg_org }}-hostgroups.cfg'
-#  when: nagios_cfg_hostgroups |length > 0
-#
-#- name: Install Nagios servicegroups
-#  ansible.builtin.template:
-#    src: 'objects/servicegroups.cfg.j2'
-#    dest: '{{ nagios_cfg_etc }}/objects/{{ nagios_cfg_org }}-servicegroups.cfg'
-#  when: nagios_cfg_hostgroups |length > 0
-#
-#- name: Install Nagios services
-#  ansible.builtin.template:
-#    src: 'objects/services.cfg.j2'
-#    dest: '{{ nagios_cfg_etc }}/objects/{{ nagios_cfg_org }}-services.cfg'
-#  when: nagios_cfg_services | length > 0
-#  notify: Restart Nagios
-#
-#- name: Install Nagios hosts
-#  ansible.builtin.template:
-#    src: 'objects/hosts.cfg.j2'
-#    dest: '{{ nagios_cfg_etc }}/objects/{{ nagios_cfg_org }}-hosts.cfg'
-#  when: nagios_cfg_hosts | length > 0
-#  notify: Restart Nagios
-#
-- name: Install Nagios hosts configs
-  ansible.builtin.template:
-    src: 'objects/{{ item }}.j2'
-    dest: '{{ nagios_cfg_etc }}/objects/{{ nagios_cfg_org }}-{{ item }}'
   notify: Restart Nagios
   loop: "{{ nagios_cfg_template_files }}"
