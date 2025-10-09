@@ -17,6 +17,9 @@ define service {
 {% if item.hostgroups is defined %}
     hostgroups             {{ item.hostgroups }}
 {% endif %}
+{% if item.servicegroups is defined %}
+    servicegroups             {{ item.servicegroups }}
+{% endif %}
     check_command          {{ item.check_command }}
 {% if item.extra_params is defined %}
 {% for extra_parameter in item.extra_params %}
