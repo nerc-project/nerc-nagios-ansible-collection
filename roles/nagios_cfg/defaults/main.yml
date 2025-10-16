@@ -1,0 +1,17 @@
+nagios_cfg_target: "prod"
+nagios_cfg_org: "nerc"
+nagios_cfg_instance: "{{ nagios_cfg_org }}-nagios"
+nagios_cfg_prefix: "/srv/{{ nagios_cfg_instance }}"
+nagios_cfg_etc: "{{ nagios_cfg_prefix }}/etc-nagios"
+nagios_cfg_hosts: []
+nagios_cfg_services: []
+nagios_cfg_host_templates: []
+nagios_cfg_service_templates: []
+nagios_cfg_template_files:
+  - "commands.cfg"
+  - "hosts.cfg"
+  - "services.cfg"
+  - "servicegroups.cfg"
+  - "hostgroups.cfg"
+  - "host-templates.cfg"
+  - "service-templates.cfg"

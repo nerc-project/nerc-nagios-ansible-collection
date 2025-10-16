@@ -1,0 +1,23 @@
+{% for item in nagios_cfg_hosts %}
+{% if
+  item.use is not defined
+  and item.check_command is not defined
+%}
+{{ item.throwerror }}
+{% endif %}
+define host {
+    host_name              {{ item.host_name }}
+    address                {{ item.address }}
+{% if item.use is defined %}
+    use                    {{ item.use }}
+{% endif %}
+{% if item.hostgroups is defined %}
+    hostgroups             {{ item.hostgroups }}
+{% endif %}
+{% if item.extra_params is defined %}
+{% for extra_parameter in item.extra_params %}
+    {{ extra_parameter.name }}    {{ extra_parameter.value }}
+{% endfor %}
+{% endif %}
+}
+{% endfor %}

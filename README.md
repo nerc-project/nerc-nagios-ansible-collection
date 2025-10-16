@@ -14,6 +14,10 @@ collections:
 
 ## Roles
 
+### nagios_cfg
+
+Installs nagios config files to monitor hosts and services.
+
 ### nrpe
 
 Installs nrpe container on a host to be monitored by the nagios server.

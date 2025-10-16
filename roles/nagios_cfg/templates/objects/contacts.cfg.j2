@@ -1,0 +1,10 @@
+{% for item in nagios_cfg_contacts %}
+define contact {
+    contact_name                        {{ item.contact_name }}
+    use                                 {{ item.use }}
+    alias                               {{ item.alias }}
+    host_notification_commands          {{ item.host_notification_commands }}
+    service_notification_commands       {{ item.service_notification_commands }}
+    contactgroups                       {{ item.contactgroups }}
+}
+{% endfor%}

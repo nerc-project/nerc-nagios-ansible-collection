@@ -1,6 +1,6 @@
 namespace: nerc
 name: nagios
-version: '0.0.1'
+version: '0.0.2'
 readme: README.md
 authors: Abaris
 description: Collection of roles to deploy Nagios
