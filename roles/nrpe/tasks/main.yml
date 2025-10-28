@@ -96,3 +96,15 @@
     daemon_reload: true
     state: started
     enabled: true
+
+- name: Check if firewalld service is running
+  ansible.builtin.service:
+    name: firewalld
+    state: started
+  check_mode: true
+  register: firewalld_status
+
+- name: Print firewalld status
+  ansible.builtin.debug:
+    msg: "firewalld is running"
+  when: firewalld_status.status.ActiveState == "active"
