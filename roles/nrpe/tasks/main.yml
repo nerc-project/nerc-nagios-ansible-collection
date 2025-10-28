@@ -85,7 +85,7 @@
       - "{{ nerc_nrpe_prefix }}/scripts:/opt/scripts:ro"
       - "{{ nerc_nrpe_prefix }}/log:/var/log/nrpe:rw"
       - "/:/rootfs:ro"
-      - "/var/run:/var/run:ro"
+      - "/var/run:/rootfs/var/run:ro"
       - "/sys:/sys:ro"
     command: /usr/sbin/nrpe -c /etc/nagios/nrpe.cfg -f
   notify: Restart NRPE
