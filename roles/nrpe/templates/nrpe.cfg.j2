@@ -107,7 +107,7 @@ nrpe_group=nrpe
 #
 # NOTE: This option is ignored if NRPE is running under either inetd or xinetd
 
-allowed_hosts=127.0.0.1,::1{% if nrpe_allow_addresses is defined %},{{ nrpe_allow_addresses }}{% endif %}
+allowed_hosts=127.0.0.1,::1{% if nrpe_allow_addresses is defined %}{% for item in nrpe_allow_addresses %},{{ item }}{% endfor %}{% endif %}
 
 
 
