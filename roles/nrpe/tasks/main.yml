@@ -100,7 +100,7 @@
 - name: Check firewalld status using systemctl
   ansible.builtin.command: systemctl is-active firewalld
   register: firewalld_active_status
-  changed_when: false 
+  changed_when: false
   failed_when: false
 
 - name: Print firewalld status
