@@ -97,6 +97,12 @@
     state: started
     enabled: true
 
+- name: Get firewalld service status
+  ansible.builtin.command: systemctl is-active firewalld
+  regiser: firewalld_status
+  changed_when: false
+  failed_when: false
+
 - name: Allow incoming TCP connections on port 5666
   ansible.posix.firewalld:
     rich_rule: >-
@@ -105,5 +111,5 @@
     permanent: yes
     state: enabled
     immediate: yes
-  when: firewalld_active_status.stdout == "active"
+  when: firewalld_status.stdout == "active"
   loop: "{{ nrpe_allow_addresses }}"
