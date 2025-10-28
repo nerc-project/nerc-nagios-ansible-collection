@@ -97,14 +97,12 @@
     state: started
     enabled: true
 
-- name: Check if firewalld service is running
-  ansible.builtin.service:
-    name: firewalld
-    state: started
-  check_mode: true
-  register: firewalld_status
+- name: Check firewalld status using systemctl
+  ansible.builtin.command: systemctl is-active firewalld
+  register: firewalld_active_status
+  changed_when: false 
 
 - name: Print firewalld status
   ansible.builtin.debug:
-    msg: "firewalld is running"
-  when: firewalld_status.status.ActiveState == "active"
+    msg: "firewalld is running."
+  when: firewalld_active_status.stdout == "active"
