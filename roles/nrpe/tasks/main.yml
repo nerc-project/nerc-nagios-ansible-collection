@@ -59,6 +59,7 @@
     mode: '0755'
   loop:
     "{{ nrpe_configs }}"
+  notify: Restart NRPE
 
 - name: Create NRPE container
   containers.podman.podman_container:
@@ -87,6 +88,7 @@
       - "/var/run:/var/run:ro"
       - "/sys:/sys:ro"
     command: /usr/sbin/nrpe -c /etc/nagios/nrpe.cfg -f
+  notify: Restart NRPE
 
 - name: Enable NRPE systemd service
   ansible.builtin.systemd:

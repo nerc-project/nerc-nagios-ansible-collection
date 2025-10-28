@@ -1,4 +1,5 @@
 - name: Restart NRPE
   ansible.builtin.service:
+    daemon_reload: true
     name: "{{ nerc_nrpe_name }}"
     state: restarted
