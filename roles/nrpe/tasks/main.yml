@@ -99,7 +99,7 @@
 
 - name: Get firewalld service status
   ansible.builtin.command: systemctl is-active firewalld
-  regiser: firewalld_status
+  register: firewalld_status
   changed_when: false
   failed_when: false
 
