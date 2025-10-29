@@ -59,6 +59,7 @@
     mode: '0755'
   loop:
     "{{ nrpe_configs }}"
+  notify: Restart NRPE
 
 - name: Create NRPE container
   containers.podman.podman_container:
@@ -84,9 +85,10 @@
       - "{{ nerc_nrpe_prefix }}/scripts:/opt/scripts:ro"
       - "{{ nerc_nrpe_prefix }}/log:/var/log/nrpe:rw"
       - "/:/rootfs:ro"
-      - "/var/run:/var/run:rw"
+      - "/var/run:/rootfs/var/run:ro"
       - "/sys:/sys:ro"
     command: /usr/sbin/nrpe -c /etc/nagios/nrpe.cfg -f
+  notify: Restart NRPE
 
 - name: Enable NRPE systemd service
   ansible.builtin.systemd:
@@ -94,3 +96,20 @@
     daemon_reload: true
     state: started
     enabled: true
+
+- name: Get firewalld service status
+  ansible.builtin.command: systemctl is-active firewalld
+  register: firewalld_status
+  changed_when: false
+  failed_when: false
+
+- name: Allow incoming TCP connections on port 5666
+  ansible.posix.firewalld:
+    rich_rule: >-
+      rule family='ipv4' source address='{{ item }}' port port='5666'
+      protocol='tcp' accept
+    permanent: yes
+    state: enabled
+    immediate: yes
+  when: firewalld_status.stdout == "active"
+  loop: "{{ nrpe_allow_addresses }}"
