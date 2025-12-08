@@ -9,6 +9,7 @@ nagios_cfg_host_templates: []
 nagios_cfg_service_templates: []
 nagios_cfg_template_files:
   - "commands.cfg"
+  - "contacts.cfg"
   - "hosts.cfg"
   - "services.cfg"
   - "servicegroups.cfg"
